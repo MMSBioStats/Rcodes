@@ -1,0 +1,114 @@
+modelsim<-lmer(deathout~treat+treat*wtgroup*ventout+(1|center),family=poisson(link="log"),
+	data=photonew)
+N<-1890
+N1<-350	#small ventilated
+N2<-65	#small, not ventilated
+N3<-325   #large, ventilated
+N4<-215	#large, not ventilated
+
+N1<-65	#small ventilated
+N2<-350	#small, not ventilated
+N3<-215   #large, ventilated
+N4<-325	#large, not ventilated
+
+betas<-c(round(fixef(modelsim),2))
+
+
+X1<-matrix(rep(rep(1,8),N1),ncol=8,nrow=N1,byrow=T)
+X2<-matrix(rep(c(1,1,1,0,0,1,0,0),N2), ncol=8,nrow=N2,byrow=T)
+X3<-matrix(rep(c(1,1,0,1,0,0,1,0),N3),ncol=8,nrow=N3,byrow=T)
+X4<-matrix(rep(c(1,1,0,0,0,0,0,0),N4),ncol=8,nrow=N4,byrow=T)
+X5<-matrix(rep(c(1,0,1,1,1,0,0,0),N1),ncol=8,nrow=N1,byrow=T)
+X6<-matrix(rep(c(1,0,1,0,0,0,0,0),N2),ncol=8,nrow=N2,byrow=T)
+X7<-matrix(rep(c(1,0,0,1,0,0,0,0),N3), ncol=8,nrow=N3,byrow=T)
+X8<-matrix(rep(c(1,rep(0,7)),N4),ncol=8,nrow=N4,byrow=T)
+Xmatrix<-rbind(X1,X2,X3,X4,X5,X6,X7,X8)
+
+nsim<-1000
+Xsub<-matrix(c(0,1,0,0,1,1,0,1,
+			0,1,0,0,1,0,0,0,
+			 0,1,0,0,0,1,0,0,
+			 0,1,0,0,0,0,0,0),ncol=8,nrow=4,byrow=T)
+trueOR<-Xsub%*%betas
+
+pvalue3way<-rep(NA,nsim)
+tau1<-.177
+tau2<-.177/2
+logOR<-matrix(NA,ncol=4,nrow=nsim)
+varOR<-array(NA,c(nsim,4,4))
+coverOR<-matrix(NA,ncol=4,nrow=nsim)
+ProbOR1<-matrix(NA,ncol=4,nrow=nsim)
+
+### BEGINNING OF SIM LOOP
+for(s in 1:nsim){
+mu<-Xmatrix%*%betas+
+	apply(Xmatrix[,c(6,7,8)]*mvrnorm(N,rep(0,3),diag(c(tau1,tau1,tau2))),1,sum)
+
+
+yfake<-rbinom(N,1,invlogit(mu))
+datafake<-data.frame(cbind(yfake,Xmatrix[,c(2,3,4)]))
+names(datafake)<-c("yfake","treat","wt","vent")
+
+datafake$treat.f<-factor(datafake$treat, labels=c("Ag","Con"))
+datafake$wt.f<-factor(datafake$wt, labels=c("Small","Big"))
+datafake$vent.f<-factor(datafake$vent, labels=c("yes","No"))
+
+contrasts(datafake$treat.f)=contr.treatment(2)
+contrasts(datafake$wt.f)=contr.treatment(2)
+contrasts(datafake$vent.f)=contr.treatment(2)
+
+
+datafake$treat2<-datafake$treat*(-1)+1
+datafake$wt2<-datafake$wt*(-1)+1
+datafake$vent2<-datafake$vent*(-1)+1
+
+modelfake<-glm(yfake~treat.f*wt.f*vent.f,family=poisson(link="log"), 
+			data=datafake)
+modelfake2<-glm(yfake~as.factor(treat2)*as.factor(wt2)*as.factor(vent2),family=poisson(link="log"), 
+			data=datafake)
+
+#				contrasts = list(as.factor(treat)="contr.helmert", as.factor(wt)="contr.helmert", as.factor(vent)="contr.helmert"),data=datafake)
+#modelfake<-glm(yfake~treat*wt*vent,family=binomial(link="logit"), data=datafake)
+
+
+pvalue3way[s]<- summary(modelfake)$coef[8,4]<.05
+
+###BAYESIAN SUBGROUP ANALYSIS
+thetahat<-coef(modelfake)
+Cmat<-vcov(modelfake)
+Cinv<-solve(Cmat)
+
+Dinv<-diag(c(0,0,0,0,1/tau1,1/tau1,0,1/tau1))
+Binv<-Cinv+Dinv
+
+B<-solve(Binv)
+b<-Cinv%*%thetahat
+post.mean2<-B%*%b
+
+
+logOR[s,]<-(Xsub%*%post.mean)
+varOR[s,,]<-(Xsub%*%B%*%t(Xsub))
+coverOR[s,]<-abs(trueOR-logOR[s,])< 2*sqrt(diag(varOR[s,,]))
+#
+for(i in 1:4){
+ProbOR1[s,i]<-pnorm(0,logOR[s,i],sd=sqrt(varOR[s,i,i]))
+}
+#print(s)
+}  #END OF SIM LOOP
+
+par(mfrow=c(2,2))
+for(i in 1:4){
+hist(logOR[,i])
+abline(v=trueOR[i])
+}
+
+par(mfrow=c(2,2))
+for(i in 1:4){
+hist(ProbOR1[,i])
+}
+
+
+
+
+
+

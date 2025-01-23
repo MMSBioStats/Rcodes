@@ -1,0 +1,15 @@
+
+# BUGS model specification begins here...
+model {
+for( i in 1 : nData ) {
+y[i] ~ dbern (p.bound[i])
+p.bound[i] <- max(0, min(1, mu[i]))
+log(mu[i]) <-   b0   + b1*x[i]
+}
+b0 ~ dnorm( -1.049822, 18.8 )
+
+b1 ~ dnorm( -0.2876821 , 21)   #logRR
+
+}
+# ... end BUGS model specification
+
