@@ -1,3 +1,34 @@
+# --- 
+# Title: Bayesian Logistic Regression using brms
+# Description: Analysis of repeat grade status using a Bayesian GLM with posterior predictions, emmeans, and marginal effects.
+# Dataset: Thai Education dataset from M.L. Snijders & Bosker multilevel book
+# URL: https://github.com/MultiLevelAnalysis/Datasets-third-edition-Multilevel-book
+# Tags: 
+#   bayesian, 
+#   logistic regression, 
+#   brms, 
+#   glm, 
+#   bernoulli, 
+#   tidybayes, 
+#   emmeans, 
+#   marginal effects, 
+#   posterior prediction, 
+#   repeated outcome, 
+#   R, 
+#   tidyverse, 
+#   multilevel modeling, 
+#   inference, 
+#   MCMC, 
+#   ggemmeans, 
+#   ggpredict, 
+#   predictive probability, 
+#   education dataset, 
+#   REPEAT, 
+#   SEX, 
+#   PPED, 
+#   MSESC
+# ---
+
 library(tidyverse) 
 library(haven) 
 library(brms) #for Bayesian (multilevel) generalised linear modelling
