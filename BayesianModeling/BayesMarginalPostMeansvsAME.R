@@ -1,3 +1,33 @@
+# ---
+# Title: Bayesian Logistic Regression with Posterior Marginal Effects
+# Description: Uses Bayesian GLM via brms to model grade repetition status based on gender and parental education. Posterior predictions, emmeans-based estimates, and average marginal effects are computed.
+# Dataset: Thai Education dataset from Snijders & Bosker multilevel book
+# URL: https://github.com/MultiLevelAnalysis/Datasets-third-edition-Multilevel-book
+# Tags: 
+#   bayesian, 
+#   logistic regression, 
+#   brms, 
+#   glm, 
+#   bernoulli, 
+#   emmeans, 
+#   marginal effects, 
+#   posterior_epred, 
+#   tidyverse, 
+#   education dataset, 
+#   average marginal effects, 
+#   MCMC, 
+#   credible intervals, 
+#   risk difference, 
+#   ggplot2, 
+#   ggemmeans, 
+#   repeated outcome, 
+#   R, 
+#   PPED, 
+#   SEX, 
+#   REPEAT
+# ---
+
+
 library(tidyverse) 
 library(haven) 
 library(brms) #for Bayesian (multilevel) generalised linear modelling
