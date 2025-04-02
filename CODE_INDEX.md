@@ -154,8 +154,18 @@ A searchable index for all R scripts in this repository.
 - [`BayesNegBinLongitudinalPower.R`](PowerAnalysis/BayesNegBinLongitudinalPower.R)
   - Performs 250 Bayesian and frequentist simulations to evaluate treatment effects on repeated count outcomes using Poisson mixed-effects models.
   - Estimates the power and posterior probabilities for detecting clinically meaningful treatment effects across two timepoints and grouped subjects.
-- [``]()
-- [``]()
+    
+- [`BayesianGammaPower2020.R`](PowerAnalysis/BayesianGammaPower2020.R)
+  - Perform Bayesian and frequentist power calculations to evaluate treatment group differences using simulated gamma-distributed cost data.
+  - Fit a Gamma GLM with log link and compute posterior probabilities under a normal prior to assess evidence strength across simulation replicates.
+    
+- [`BayesianNonInferiorityPower.R`](PowerAnalysis/BayesianNonInferiorityPower.R)
+  - Simulate Bayesian power for a non-inferiority trial comparing event rates across treatment groups using beta-binomial models.
+  - Estimate the probability that the risk difference remains below a specified margin under different design scenarios, including both two-arm and one-arm configurations.
+    
+- [`BayesianSuperiorityPower.R`](PowerAnalysis/BayesianSuperiorityPower.R)
+  - Perform Bayesian power calculations for a non-inferiority transfusion trial using informative and neutral beta priors centered around assumed event rates.
+  - Evaluate posterior probabilities and credible intervals for treatment group differences across simulated trials to assess likelihood of demonstrating non-inferiority.
 - [``]()
 - [``]()
 - [``]()
